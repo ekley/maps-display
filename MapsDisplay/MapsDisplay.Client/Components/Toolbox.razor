@@ -1,5 +1,7 @@
-﻿@using Microsoft.AspNetCore.Components
+﻿@using System.Threading.Tasks
 @using MapsDisplay.Client.Services
+@using Shared.Models
+@using Microsoft.AspNetCore.Components
 @inject LocalAuthorityApiService AuthorityService
 @inject IJSRuntime JS
 @rendermode InteractiveWebAssembly
@@ -28,11 +30,20 @@
     private string searchQuery = string.Empty;
     private List<string> areas = new List<string> { };
     private List<string> filteredAreas;
+    private static readonly int debounceDelay = 500; // 500ms delay for debouncing
+    private System.Threading.CancellationTokenSource debounceSearchCts;
 
     private async Task DebouncedToggleLayer()
     {
-        const isDebounced = true;
-        if (passedDebounced)
+        if (debounceSearchCts != null)
+        {
+            debounceSearchCts.Cancel();
+        }
+
+        debounceSearchCts = new System.Threading.CancellationTokenSource();
+
+        await Task.Delay(debounceDelay);
+        if (!debounceSearchCts.Token.IsCancellationRequested)
         {
             ToggleLayer(); // Only toggle visibility if the delay has passed
         }
@@ -45,8 +56,15 @@
 
     private async Task DebouncedSearchClick()
     {
-        const isDebounced = true;
-        if (passedDebounced)
+        if (debounceSearchCts != null)
+        {
+            debounceSearchCts.Cancel();
+        }
+
+        debounceSearchCts = new System.Threading.CancellationTokenSource();
+
+        await Task.Delay(debounceDelay);
+        if (!debounceSearchCts.Token.IsCancellationRequested)
         {
             FilterAreas(); // Trigger the search if the delay passes
         }
@@ -68,7 +86,14 @@
 
     private async void DebouncedSearchInput()
     {
-        const isDebounced = true;
+        if (debounceSearchCts != null)
+        {
+            debounceSearchCts.Cancel();
+        }
+
+        debounceSearchCts = new System.Threading.CancellationTokenSource();
+
+        await Task.Delay(debounceDelay);
         if (!debounceSearchCts.Token.IsCancellationRequested)
         {
             FillIntellisense();

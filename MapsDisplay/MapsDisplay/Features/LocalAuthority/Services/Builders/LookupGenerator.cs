@@ -9,15 +9,16 @@ namespace MapsDisplay.Features.LocalAuthority.Services.Builders
     {
         public static void Generate()
         {
-            string geoJsonDirectory = Path.Combine(
+            string datasetsDirectory = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "Features", "LocalAuthority", "Data", "Datasets");
+            string geoJsonPath = Path.Combine(datasetsDirectory, "local_authority_district.geojson");
+            string jsonPath = Path.Combine(datasetsDirectory, "lookup.json");
 
-            string geoJsonPath = Path.Combine(geoJsonDirectory, "local_authority_district.geojson");
-            if (File.Exists(geoJsonPath))
+            if (File.Exists(jsonPath))
             {
-                Console.WriteLine("File already exists. Skipping Docker command.");
-                return; // Return early if the file already exists
+                Console.WriteLine("lookup.json file already exists. Skipping file generating");
+                return;
             }
 
             var geoJsonText = File.ReadAllText(geoJsonPath);
@@ -84,7 +85,6 @@ namespace MapsDisplay.Features.LocalAuthority.Services.Builders
                 lookup[name] = geometryData;
             }
 
-            string jsonPath = Path.Combine(geoJsonDirectory, "lookup.json");
             var outputJson = JsonSerializer.Serialize(lookup);
             File.WriteAllText(jsonPath, outputJson);
 

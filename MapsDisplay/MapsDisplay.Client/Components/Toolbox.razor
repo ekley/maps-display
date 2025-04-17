@@ -80,7 +80,7 @@
     private async Task FilterAreas()
     {
         if (!IsValidQuery) return;
-
+        filteredAreas = new List<string>();
         var localAuthorityGeo = await AuthorityService.BboxByNameAsync(searchQuery);
         await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo);
     }

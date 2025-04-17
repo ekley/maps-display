@@ -1,4 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components
+@using MapsDisplay.Client.Services
+@inject LocalAuthorityApiService AuthorityService
 @inject IJSRuntime JS
 @rendermode InteractiveWebAssembly
 
@@ -52,6 +54,7 @@
 
     private async Task FilterAreas()
     {
+        var localAuthorityGeo = await AuthorityService.BboxByNameAsync(searchQuery);
         await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo);
     }
 

@@ -32,9 +32,24 @@
         this.map.sources.add(source);
         this.map.layers.add(polygonLayer);
     },
-    setFilter: function (areaName) {
+    setFilter: function (areaName, geometry) {
+        const shape = {
+            type: "Feature",
+            geometry: { ...geometry },
+            properties: {}
+        };
+        const bbox = turf.bbox(shape);
+
         this.polygonLayer.setOptions({
             filter: ['==', ['get', 'name'], areaName]
         });
+
+        // take the map camera to the searched district
+        this.map.setCamera({
+            bounds: bbox,
+            padding: 40,
+            maxZoom: 12
+        });
+
     }
 };

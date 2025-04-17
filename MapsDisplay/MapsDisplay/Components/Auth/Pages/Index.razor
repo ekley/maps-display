@@ -1,7 +1,4 @@
 ﻿@page "/auth"
-@using MapsDisplay.Components.Account
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Identity
 @inject IdentityUserAccessor UserAccessor
 @attribute [Authorize]
 
@@ -12,6 +9,7 @@
     Hello @context.User.Identity?.Name!
     <h1>Welcome to local authorities district Maps</h1>
     <p>Here can discorver different local district authorities.</p>
+    <Maps />
 </AuthorizeView>
 
 @code {

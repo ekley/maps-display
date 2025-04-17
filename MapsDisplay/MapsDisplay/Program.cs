@@ -8,6 +8,7 @@ using MapsDisplay.Features.LocalAuthority.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Shared.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
-builder.Services.AddScoped<LocalAuthorityApiService>();
+builder.Services.AddScoped<ILocalAuthorityApiService, LocalAuthorityApiService>();
 builder.Services.AddScoped<ILocalAuthorityService, LocalAuthorityService>();
 
 builder.Services.AddAuthentication(options =>

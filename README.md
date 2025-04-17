@@ -14,8 +14,7 @@ The goal of this application is to visualize **Local Authority Districts** in En
 
 - 🗺️ Displays all Local Authority Districts on an interactive map at initial load.
 - 🔍 Allows users to **filter specific areas** by name (e.g., "Oxford", "Westminster").
-- 🙈 Supports toggling to **hide all displayed data**.
-- ⚡ Smooth user experience through a modern frontend and optimized backend.
+- 👁️ Supports toggling to hide all displayed data.
 
 ---
 
@@ -36,7 +35,7 @@ The goal of this application is to visualize **Local Authority Districts** in En
 - **Blazor Hybrid** is used to deliver a rich, interactive UI.
 - **.NET Core 8 Web API** serves spatial and filtered data to the frontend.
 - **SQLite** stores and processes the Local Authority District dataset.
-- **Mapbox** handles the rendering of spatial boundaries.
+- **Azure Maps with Turf.js** handles the rendering of spatial boundaries.
 
 ---
 

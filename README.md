@@ -57,3 +57,25 @@ The goal of this application is to visualize **Local Authority Districts** in En
 git clone https://github.com/yourusername/your-repo.git
 cd your-repo
 ```
+
+2. Go to go to Features/LocalAuthority/Data/Datasets path
+open power shell (on windows) or terminal (on any other os) and make sure have admin role
+and run:
+
+```bash
+Pull docker image: metacollin/tippecanoe
+```
+
+3. Then run the container interactively:
+
+ ```bash
+docker run -it --rm -v "${PWD}:/data" metacollin/tippecanoe /bin/bash
+```
+
+3. Run Tippecanoe Inside the Container (to generate .mbtile file from your jeojson datasets):
+
+ ```bash
+ tippecanoe --no-tile-compression --include=name -l local_authorities_layer -o /data/local_authorities.mbtiles /data/local_authority_district.geojson
+```
+
+4. Now the app's ready to use (when you run the app lookup.json file will automatically be generated for you if the file does not exist)

@@ -70,7 +70,7 @@ cd maps-display
       "ClientId": "YOUR_CLIENT_ID_FOR_REGISTERED_APP",
       "ClientSecret": "YOUR_CLIENT_SECRET_FOR_REGISTERED_APP",
       "TenantId": "YOUR_TENANT_ID_FOR_REGISTERED_APP",
-      "CallbackPath": "/SIGNIN-MICROSOFT",
+      "CallbackPath": "/signin-microsoft",
       "AuthorizationEndpoint": "https://login.microsoftonline.com/YOUR_TENANT_ID_FOR_REGISTERED_APP/oauth2/v2.0/authorize",
       "TokenEndpoint": "https://login.microsoftonline.com/YOUR_TENANT_ID_FOR_REGISTERED_APP/oauth2/v2.0/token"
     }

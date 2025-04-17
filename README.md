@@ -78,4 +78,4 @@ docker run -it --rm -v "${PWD}:/data" metacollin/tippecanoe /bin/bash
  tippecanoe --no-tile-compression --include=name -l local_authorities_layer -o /data/local_authorities.mbtiles /data/local_authority_district.geojson
 ```
 
-4. Now the app's ready to use (when you run the app lookup.json file will automatically be generated for you if the file does not exist)
+4. This will build 'local_authorities.mbtiles' file, now the app's ready to use (when you run the app 'lookup.json' file will automatically be generated for you if the file does not exist)

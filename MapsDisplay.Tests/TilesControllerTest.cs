@@ -12,7 +12,7 @@ namespace MapsDisplay.Tests
         {
             TempDbPath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "test.mbtiles");
 
-            // Setup the database before any tests run
+            // create the table before each test run
             using (var connection = new SqliteConnection($"Data Source={TempDbPath};"))
             {
                 connection.Open();
@@ -31,6 +31,7 @@ namespace MapsDisplay.Tests
 
         public void Dispose()
         {
+            // drop the table after each test run
             using (var connection = new SqliteConnection($"Data Source={TempDbPath};"))
             {
                 connection.Open();
@@ -58,7 +59,7 @@ namespace MapsDisplay.Tests
             }
         }
     }
-    public class TilesControllerTest:IClassFixture<TileDatabaseFixture>
+    public class TilesControllerTest : IClassFixture<TileDatabaseFixture>
     {
         private TileDatabaseFixture _fixture;
 

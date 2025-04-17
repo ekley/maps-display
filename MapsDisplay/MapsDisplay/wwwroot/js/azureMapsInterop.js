@@ -31,5 +31,10 @@
 
         this.map.sources.add(source);
         this.map.layers.add(polygonLayer);
+    },
+    setFilter: function (areaName) {
+        this.polygonLayer.setOptions({
+            filter: ['==', ['get', 'name'], areaName]
+        });
     }
 };

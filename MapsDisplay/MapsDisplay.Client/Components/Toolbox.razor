@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components
+@inject IJSRuntime JS
 @rendermode InteractiveWebAssembly
 
 <div class="toolbox">
@@ -51,7 +52,7 @@
 
     private async Task FilterAreas()
     {
-        // To-Do
+        await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo);
     }
 
     private async void OnSearchInput(ChangeEventArgs e)

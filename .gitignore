@@ -1,0 +1,91 @@
+# .NET build output
+bin/
+obj/
+out/
+Generated/
+GeneratedFiles/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/
+
+# Mac / Windows system files
+.DS_Store
+Thumbs.db
+
+# ASP.NET Core Secrets
+secrets.json
+
+# ASP.NET / Blazor Publish Output
+wwwroot/dist/
+wwwroot/build/
+wwwroot/node_modules/
+publish/
+*/publish/
+
+# Build results for WebAssembly
+**/bin/
+**/obj/
+**/wwwroot/appsettings*.json
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.nuspec
+
+# User-specific files (dotnet / VS)
+.vs/
+*.userprefs
+*.pidb
+
+# Logs
+*.log
+logs/
+log/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+coverage*.json
+
+# Node / NPM / Yarn
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment files
+.env
+.env.*
+
+# JetBrains Rider logs
+.idea/
+*.ipr
+*.iws
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Blazor WebAssembly specific
+wwwroot/service-worker-assets.js
+wwwroot/_framework/
+wwwroot/_content/

@@ -19,5 +19,13 @@ namespace MapsDisplay.Client.Services
 
             return response ?? new GeometryDto();
         }
+
+        public async Task<List<string>> FilterByNameAsync(string name)
+        {
+            var response = await _http.GetFromJsonAsync<List<string>>(
+                $"api/LocalAuthorities/similar-names?name={Uri.EscapeDataString(name)}");
+
+            return response ?? new List<string>();
+        }
     }
 }

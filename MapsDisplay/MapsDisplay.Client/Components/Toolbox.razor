@@ -18,7 +18,7 @@
         <ul class="suggestions">
             @foreach (var area in filteredAreas)
             {
-                <li>@area</li>
+                <li @onclick="() => SelectArea(area)">@area</li>
             }
         </ul>
     }
@@ -77,7 +77,13 @@
 
     private async Task FillIntellisense()
     {
-        // TO-DO
+        filteredAreas = await AuthorityService.FilterByNameAsync(searchQuery);
+    }
+
+    private void SelectArea(string area)
+    {
+        searchQuery = area;
+        filteredAreas = new List<string>(); // Clear suggestions
     }
 
 }

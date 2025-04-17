@@ -1,9 +1,5 @@
-﻿using NetTopologySuite.Features;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
-using System.Text.Json;
-using NetTopologySuite.IO;
-using NetTopologySuite.Geometries;
 
 namespace MapsDisplay.Features.LocalAuthority.Controllers
 {
@@ -40,88 +36,6 @@ namespace MapsDisplay.Features.LocalAuthority.Controllers
             }
 
             return NoContent();
-        }
-
-        // a look up table that saves coordinates based on the district name
-        // this method generate local_authority_district.geojson file in Features/LocalAuthority/Data/Datasets folder
-        [HttpGet("generate-lookup-file")]
-        public void GenerateLookup()
-        {
-            string geoJsonPath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Features", "LocalAuthority", "Data", "Datasets", "local_authority_district.geojson"
-            );
-
-            var geoJsonText = System.IO.File.ReadAllText(geoJsonPath);
-            var reader = new GeoJsonReader();
-            var featureCollection = reader.Read<FeatureCollection>(geoJsonText);
-
-            var lookup = new Dictionary<string, object>();
-
-            foreach (var feature in featureCollection)
-            {
-                var name = feature.Attributes["name"].ToString();
-                var geometry = feature.Geometry;
-                var geometryData = new object();
-
-                if (geometry is Point point)
-                {
-                    geometryData = new
-                    {
-                        type = "Point",
-                        coordinates = new[] { point.X, point.Y }
-                    };
-                }
-                else if (geometry is Polygon polygon)
-                {
-                    geometryData = new
-                    {
-                        type = "Polygon",
-                        coordinates = new[]
-                        {
-                                polygon.Shell.Coordinates
-                                    .Select(c => new[] { c.X, c.Y })
-                                    .ToArray()
-                            }
-                        .Concat(
-                            polygon.Holes.Select(
-                                hole => hole.Coordinates
-                                            .Select(c => new[] { c.X, c.Y })
-                                            .ToArray()
-                            )
-                        ).ToArray()
-                    };
-                }
-                else if (geometry is MultiPolygon multiPolygon)
-                {
-                    geometryData = new
-                    {
-                        type = "MultiPolygon",
-                        coordinates = multiPolygon.Geometries
-                            .Select(p => p.Coordinates
-                                .Select(c => new[] { c.X, c.Y })
-                                .ToArray())
-                            .ToArray()
-                    };
-                }
-                else
-                {
-                    // Handle other geometry types as needed (LineString, MultiLineString, etc.)
-                    geometryData = new
-                    {
-                        type = geometry.GeometryType,
-                        coordinates = "Unsupported geometry type"
-                    };
-                }
-
-                // Add to lookup dictionary
-                lookup[name] = geometryData;
-            }
-
-            var outputJson = JsonSerializer.Serialize(lookup);
-            System.IO.File.WriteAllText("lookup.json", outputJson);
-
-            Console.WriteLine("lookup.json has been created!");
         }
 
         private static int FlipY(int zoom, int y) => (1 << zoom) - 1 - y;

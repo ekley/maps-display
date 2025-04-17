@@ -2,6 +2,7 @@ using MapsDisplay.Client.Services;
 using MapsDisplay.Components;
 using MapsDisplay.Components.Account;
 using MapsDisplay.Features.LocalAuthority.Data;
+using MapsDisplay.Features.LocalAuthority.Services.Builders;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,9 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
+DatasetBuilder.BuildAll();
+
+
 app.MapControllers();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -51,14 +51,37 @@ The goal of this application is to visualize **Local Authority Districts** in En
 
 ### Installation
 
+
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/your-repo.git
-cd your-repo
+git clone https://github.com/yourusername/maps-display.git
+cd maps-display
 ```
 
-2. Go to go to Features/LocalAuthority/Data/Datasets path
+2. Before everything you need to create required Azure services (like Azure Maps and ...) and set secrets.json (right click on MapsDisplay solution -> Mangae User Secrets) of your app as follows:
+
+```bash
+{
+  "Authentication": {
+    "Microsoft": {
+      "Instance": "https://login.microsoftonline.com",
+      "Domain": "YOUR_AZURE_DOMAIN_FOR_REGISTERED_APP",
+      "ClientId": "YOUR_CLIENT_ID_FOR_REGISTERED_APP",
+      "ClientSecret": "YOUR_CLIENT_SECRET_FOR_REGISTERED_APP",
+      "TenantId": "YOUR_TENANT_ID_FOR_REGISTERED_APP",
+      "CallbackPath": "/SIGNIN-MICROSOFT",
+      "AuthorizationEndpoint": "https://login.microsoftonline.com/YOUR_TENANT_ID_FOR_REGISTERED_APP/oauth2/v2.0/authorize",
+      "TokenEndpoint": "https://login.microsoftonline.com/YOUR_TENANT_ID_FOR_REGISTERED_APP/oauth2/v2.0/token"
+    }
+  },
+  "Maps": {
+    "SubscriptionKey": "YOUR_AZURE_MAPS_SUBSCRIPTION_ID"
+  }
+}
+```
+
+3. Go to go to Features/LocalAuthority/Data/Datasets path
 open power shell (on windows) or terminal (on any other os) and make sure have admin role
 and run:
 
@@ -66,16 +89,16 @@ and run:
 Pull docker image: metacollin/tippecanoe
 ```
 
-3. Then run the container interactively:
+4. Then run the container interactively:
 
  ```bash
 docker run -it --rm -v "${PWD}:/data" metacollin/tippecanoe /bin/bash
 ```
 
-3. Run Tippecanoe Inside the Container (to generate .mbtile file from your jeojson datasets):
+5. Run Tippecanoe Inside the Container (to generate .mbtile file from your jeojson datasets):
 
  ```bash
  tippecanoe --no-tile-compression --include=name -l local_authorities_layer -o /data/local_authorities.mbtiles /data/local_authority_district.geojson
 ```
 
-4. This will build 'local_authorities.mbtiles' file, now the app's ready to use (when you run the app 'lookup.json' file will automatically be generated for you if the file does not exist)
+6. This will build 'local_authorities.mbtiles' file, now the app's ready to use (when you run the app 'lookup.json' file will automatically be generated for you if the file does not exist)

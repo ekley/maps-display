@@ -40,7 +40,7 @@
 
     private async Task ToggleLayer()
     {
-        // To-Do
+        await JS.InvokeVoidAsync("azureMaps.clearMap");
     }
 
     private async Task DebouncedSearchClick()
@@ -83,7 +83,7 @@
     private void SelectArea(string area)
     {
         searchQuery = area;
-        filteredAreas = new List<string>(); // Clear suggestions
+        filteredAreas = new List<string>(); // Clear suggested districts
     }
 
 }

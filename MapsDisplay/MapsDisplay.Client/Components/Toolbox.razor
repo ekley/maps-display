@@ -1,0 +1,125 @@
+﻿@using Microsoft.AspNetCore.Components
+@rendermode InteractiveWebAssembly
+
+<div class="toolbox">
+    <button @onclick="DebouncedToggleLayer">Toggle Layer</button>
+
+    <div class="search-box">
+        <input type="text" @bind="searchQuery" @oninput="OnSearchInput" placeholder="Search Areas..." />
+
+        <button @onclick="DebouncedSearchClick">Search</button>
+    </div>
+
+    @if (filteredAreas?.Count > 0)
+    {
+        <ul class="suggestions">
+            @foreach (var area in filteredAreas)
+            {
+                <li>@area</li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    private string searchQuery = string.Empty;
+    private List<string> areas = new List<string> { };
+    private List<string> filteredAreas;
+
+    private async Task DebouncedToggleLayer()
+    {
+        const isDebounced = true;
+        if (passedDebounced)
+        {
+            ToggleLayer(); // Only toggle visibility if the delay has passed
+        }
+    }
+
+    private async Task ToggleLayer()
+    {
+        // To-Do
+    }
+
+    private async Task DebouncedSearchClick()
+    {
+        const isDebounced = true;
+        if (passedDebounced)
+        {
+            FilterAreas(); // Trigger the search if the delay passes
+        }
+    }
+
+    private async Task FilterAreas()
+    {
+        // To-Do
+    }
+
+    private async void OnSearchInput(ChangeEventArgs e)
+    {
+        searchQuery = e.Value.ToString();
+
+        // Debounce input events, but don't trigger the search until the user stops typing
+        DebouncedSearchInput();
+    }
+
+    private async void DebouncedSearchInput()
+    {
+        const isDebounced = true;
+        if (!debounceSearchCts.Token.IsCancellationRequested)
+        {
+            FillIntellisense();
+        }
+    }
+
+    private async Task FillIntellisense()
+    {
+        // TO-DO
+    }
+
+}
+
+<style>
+    .toolbox {
+        width: 300px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10;
+    }
+
+    .search-box {
+        margin-top: 10px;
+    }
+
+    .search-box input {
+        width: 80%;
+        padding: 5px;
+    }
+
+    .search-box button {
+        padding: 5px;
+        margin-left: 10px;
+    }
+
+    .suggestions {
+        list-style-type: none;
+        padding: 0;
+        margin-top: 5px;
+        background-color: white;
+        border: 1px solid #ccc;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    .suggestions li {
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .suggestions li:hover {
+        background-color: #e0e0e0;
+    }
+</style>

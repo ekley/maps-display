@@ -2,6 +2,7 @@
 @using Shared.Models
 @using Microsoft.AspNetCore.Components
 @using Shared.Services.Interfaces
+@using System.Text.RegularExpressions
 @inject ILocalAuthorityApiService AuthorityService
 @inject IJSRuntime JS
 @rendermode InteractiveWebAssembly
@@ -12,7 +13,12 @@
     <div class="search-box">
         <input type="text" @bind="searchQuery" @oninput="OnSearchInput" placeholder="Search Areas..." />
 
-        <button id="search" @onclick="DebouncedSearchClick">Search</button>
+        <button id="search" @onclick="DebouncedSearchClick" disabled="@(!IsValidQuery)">Search</button>
+
+        @if (!IsValidQuery && searchQuery.Length > 0)
+        {
+            <p class="validation-message">Only letters and spaces are allowed. Numbers and special characters are not valid.</p>
+        }
     </div>
 
     @if (filteredAreas?.Count > 0)
@@ -32,6 +38,9 @@
     private List<string> filteredAreas;
     private static readonly int debounceDelay = 500; // 500ms delay for debouncing
     private System.Threading.CancellationTokenSource debounceSearchCts;
+    private bool IsValidQuery =>
+    !string.IsNullOrWhiteSpace(searchQuery) &&
+    Regex.IsMatch(searchQuery, @"^[A-Za-z\s]+$");
 
     private async Task DebouncedToggleLayer()
     {
@@ -56,11 +65,9 @@
 
     private async Task DebouncedSearchClick()
     {
-        if (debounceSearchCts != null)
-        {
-            debounceSearchCts.Cancel();
-        }
+        if (!IsValidQuery) return;
 
+        debounceSearchCts?.Cancel();
         debounceSearchCts = new System.Threading.CancellationTokenSource();
 
         await Task.Delay(debounceDelay);
@@ -72,6 +79,8 @@
 
     private async Task FilterAreas()
     {
+        if (!IsValidQuery) return;
+
         var localAuthorityGeo = await AuthorityService.BboxByNameAsync(searchQuery);
         await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo);
     }
@@ -86,11 +95,9 @@
 
     private async void DebouncedSearchInput()
     {
-        if (debounceSearchCts != null)
-        {
-            debounceSearchCts.Cancel();
-        }
+        if (!IsValidQuery) return;
 
+        debounceSearchCts?.Cancel();
         debounceSearchCts = new System.Threading.CancellationTokenSource();
 
         await Task.Delay(debounceDelay);
@@ -112,49 +119,3 @@
     }
 
 }
-
-<style>
-    .toolbox {
-        width: 300px;
-        padding: 10px;
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 10;
-    }
-
-    .search-box {
-        margin-top: 10px;
-    }
-
-    .search-box input {
-        width: 80%;
-        padding: 5px;
-    }
-
-    .search-box button {
-        padding: 5px;
-        margin-left: 10px;
-    }
-
-    .suggestions {
-        list-style-type: none;
-        padding: 0;
-        margin-top: 5px;
-        background-color: white;
-        border: 1px solid #ccc;
-        max-height: 150px;
-        overflow-y: auto;
-    }
-
-    .suggestions li {
-        padding: 5px;
-        cursor: pointer;
-    }
-
-    .suggestions li:hover {
-        background-color: #e0e0e0;
-    }
-</style>

@@ -1,5 +1,6 @@
 ﻿using Shared.Models;
 using Shared.Services.Interfaces;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace MapsDisplay.Client.Services
@@ -36,6 +37,14 @@ namespace MapsDisplay.Client.Services
                     $"api/LocalAuthorities/similar-names?name={Uri.EscapeDataString(name)}");
 
                 return response ?? new List<string>();
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    return new List<string>();
+                }
+                throw new Exception("Server or network error: {ex.Message}", ex);
             }
             catch (Exception ex)
             {

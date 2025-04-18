@@ -8,12 +8,12 @@
 @rendermode InteractiveWebAssembly
 
 <div class="toolbox">
-    <button id="toggleLayer" @onclick="DebouncedToggleLayer">Toggle Layer</button>
+    <button id="toggleLayer" @onclick="OnToggleLayer">Toggle Layer</button>
 
     <div class="search-box">
         <input type="text" @bind="searchQuery" @oninput="OnSearchInput" placeholder="Search Areas..." />
 
-        <button id="search" @onclick="DebouncedSearchClick" disabled="@(!IsValidQuery)">Search</button>
+        <button id="search" @onclick="OnSearchClick" disabled="@(!IsValidQuery)">Search</button>
 
         @if (!IsValidQuery && searchQuery.Length > 0)
         {
@@ -35,49 +35,49 @@
 @code {
     private string searchQuery = string.Empty;
     private List<string> areas = new List<string> { };
-    private List<string> filteredAreas;
+    private List<string> filteredAreas = new List<string> { };
     private static readonly int debounceDelay = 500; // 500ms delay for debouncing
     private System.Threading.CancellationTokenSource debounceSearchCts;
     private bool IsValidQuery =>
-    !string.IsNullOrWhiteSpace(searchQuery) &&
+    !string.IsNullOrWhiteSpace(searchQuery) && 
+    searchQuery.Length > 2 &&
     Regex.IsMatch(searchQuery, @"^[A-Za-z\s]+$");
 
-    private async Task DebouncedToggleLayer()
-    {
-        if (debounceSearchCts != null)
-        {
-            debounceSearchCts.Cancel();
-        }
-
-        debounceSearchCts = new System.Threading.CancellationTokenSource();
-
-        await Task.Delay(debounceDelay);
-        if (!debounceSearchCts.Token.IsCancellationRequested)
-        {
-            ToggleLayer(); // Only toggle visibility if the delay has passed
-        }
-    }
-
-    private async Task ToggleLayer()
-    {
-        await JS.InvokeVoidAsync("azureMaps.clearMap");
-    }
-
-    private async Task DebouncedSearchClick()
+    private async Task Debounce(Action RequestToMake)
     {
         if (!IsValidQuery) return;
 
         debounceSearchCts?.Cancel();
-        debounceSearchCts = new System.Threading.CancellationTokenSource();
+        debounceSearchCts = new CancellationTokenSource();
+        var token = debounceSearchCts.Token;
 
-        await Task.Delay(debounceDelay);
-        if (!debounceSearchCts.Token.IsCancellationRequested)
+        try
         {
-            FilterAreas(); // Trigger the search if the delay passes
+            await Task.Delay(debounceDelay, token);
+
+            if (!token.IsCancellationRequested)
+            {
+                RequestToMake();
+            }
+        }
+        catch (TaskCanceledException)
+        {
+
         }
     }
 
-    private async Task FilterAreas()
+    private async void ToggleLayer()
+    {
+        await JS.InvokeVoidAsync("azureMaps.clearMap");
+    }
+
+    private async void FillIntellisense()
+    {
+        filteredAreas = await AuthorityService.FilterByNameAsync(searchQuery);
+        StateHasChanged();  // Refresh UI after update
+    }
+
+    private async void FilterAreas()
     {
         if (!IsValidQuery) return;
         filteredAreas = new List<string>();
@@ -85,37 +85,29 @@
         await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo);
     }
 
-    private async void OnSearchInput(ChangeEventArgs e)
-    {
-        searchQuery = e.Value.ToString();
-
-        // Debounce input events, but don't trigger the search until the user stops typing
-        DebouncedSearchInput();
-    }
-
-    private async void DebouncedSearchInput()
-    {
-        if (!IsValidQuery) return;
-
-        debounceSearchCts?.Cancel();
-        debounceSearchCts = new System.Threading.CancellationTokenSource();
-
-        await Task.Delay(debounceDelay);
-        if (!debounceSearchCts.Token.IsCancellationRequested)
-        {
-            FillIntellisense();
-        }
-    }
-
-    private async Task FillIntellisense()
-    {
-        filteredAreas = await AuthorityService.FilterByNameAsync(searchQuery);
-    }
-
     private void SelectArea(string area)
     {
         searchQuery = area;
         filteredAreas = new List<string>(); // Clear suggested districts
+    }
+
+    private async void OnToggleLayer()
+    {
+        await Debounce(ToggleLayer);
+    }
+
+    private async void OnSearchInput(ChangeEventArgs e)
+    {
+        if (e.Value == null) return;
+        searchQuery = e.Value.ToString() ?? "";
+
+        // Don't trigger Autocomplete request until the user stops typing
+       await Debounce(FillIntellisense);
+    }
+
+    private async void OnSearchClick()
+    {
+        await Debounce(FilterAreas);
     }
 
 }

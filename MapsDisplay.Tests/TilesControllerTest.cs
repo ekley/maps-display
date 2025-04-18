@@ -1,6 +1,8 @@
 ﻿using MapsDisplay.Features.LocalAuthority.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace MapsDisplay.Tests
 {
@@ -61,20 +63,22 @@ namespace MapsDisplay.Tests
     }
     public class TilesControllerTest : IClassFixture<TileDatabaseFixture>
     {
-        private TileDatabaseFixture _fixture;
+        private readonly TileDatabaseFixture _fixture;
+        private readonly TilesController controller;
+        private readonly Mock<ILogger<TilesController>> mockLogger;
 
         public TilesControllerTest(TileDatabaseFixture fixture)
         {
             _fixture = fixture;
+            mockLogger = new Mock<ILogger<TilesController>>();
+            controller = new TilesController(mockLogger.Object, _fixture.TempDbPath);
         }
 
         [Fact]
-        public void GetTile_ReturnsTile_WhenTileFound()
+        public void GetTile_ShouldReturnFile_WhenTileExists()
         {
             // Setup: Insert mock tile data
             _fixture.InsertTile(5, 10, 11, new byte[] { 1, 2, 3, 4 });
-
-            var controller = new TilesController(_fixture.TempDbPath);
 
             var result = controller.GetTile(5, 10, 20);
 
@@ -86,14 +90,11 @@ namespace MapsDisplay.Tests
         }
 
         [Fact]
-        public void GetTile_Returns204NoContent_WhenTileNotFound()
+        public void GetTile_ShouldReturnNoContent_WhenTileDoesNotExist()
         {
-            var controller = new TilesController(_fixture.TempDbPath);
-
             var result = controller.GetTile(108, 10, 20);
 
-            var noContentResult = Assert.IsType<NoContentResult>(result);
-            Assert.Equal(204, noContentResult.StatusCode);
+            Assert.IsType<NoContentResult>(result);
         }
     }
 }

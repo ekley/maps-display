@@ -20,13 +20,15 @@ The goal of this application is to visualize **Local Authority Districts** in En
 
 ## 🏗️ Tech Stack
 
-| Layer          | Technology                             |
-|----------------|----------------------------------------|
-| Frontend       | Blazor (WebAssembly + Server)          |
-| Backend        | Blazor (Server) + .NET Core 8 (C#)     |
-| Database       | SQLite                                 |
-| Mapping        | Azure Maps                             |
-| Additional     | JavaScript (for interop where needed)  |
+| Layer                            | Technology                             |
+|----------------------------------|----------------------------------------|
+| Hybrid Rendering                 |                                        |
+| └─ Client Rendering Components   | Blazor (WebAssembly)                   |
+| └─ Backend Rendering Components  | Blazor (Server rendering)              |
+| Backend                          | .NET Core 8 (C#)                       |
+| Database                         | SQLite                                 |
+| Mapping                          | Azure Maps                             |
+| Additional                       | JavaScript (for interop where needed)  |
 
 ---
 
@@ -45,8 +47,8 @@ The goal of this application is to visualize **Local Authority Districts** in En
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/)
 - Visual Studio 2022+ or VS Code
-- SQLite CLI / DB Browser (optional for inspection)
-- Git
+- SQLite CLI / DB Browser(SQLite) [optional for inspection]
+- Docker
 
 ### Installation
 
@@ -80,9 +82,8 @@ cd maps-display
 }
 ```
 
-3. Go to go to Features/LocalAuthority/Data/Datasets path
-open power shell (on windows) or terminal (on any other os) and make sure have admin role
-and run:
+3. Navigate to the Features/LocalAuthority/Data/Datasets directory.
+Open PowerShell or Terminal with administrator privileges, and run:
 
 ```bash
 Pull docker image: metacollin/tippecanoe
@@ -100,4 +101,7 @@ docker run -it --rm -v "${PWD}:/data" metacollin/tippecanoe /bin/bash
  tippecanoe --no-tile-compression --include=name -l local_authorities_layer -o /data/local_authorities.mbtiles /data/local_authority_district.geojson
 ```
 
-6. This will build 'local_authorities.mbtiles' file, now the app's ready to use (when you run the app 'lookup.json' file will automatically be generated for you if the file does not exist)
+This will build 'local_authorities.mbtiles' file, now the app's ready to use
+When you run the app, 'lookup.json' file will automatically be generated for you if the file does not exist.
+
+(FYI: The extracted data from the local_authority_district.geojson file is stored in the lookup.json file, which maps district names to their corresponding coordinates. This improves response times when handling client requests, such as displaying a district based on a name search on the map.)

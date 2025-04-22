@@ -6,6 +6,5 @@ namespace Shared.Services.Interfaces
     {
         Task<GeometryDto> BboxByNameAsync(string name);
 
-        Task<List<string>> FilterByNameAsync(string name);
     }
 }

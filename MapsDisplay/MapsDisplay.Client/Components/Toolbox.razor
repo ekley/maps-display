@@ -20,16 +20,6 @@
             <p class="validation-message">Only letters and spaces are allowed. Numbers and special characters are not valid.</p>
         }
     </div>
-
-    @if (filteredAreas?.Count > 0)
-    {
-        <ul class="suggestions">
-            @foreach (var area in filteredAreas)
-            {
-                <li @onclick="() => SelectArea(area)">@area</li>
-            }
-        </ul>
-    }
 </div>
 
 @code {
@@ -66,48 +56,34 @@
         }
     }
 
-    private async void ToggleLayer()
-    {
-        await JS.InvokeVoidAsync("azureMaps.clearMap");
-    }
-
-    private async void FillIntellisense()
-    {
-        filteredAreas = await AuthorityService.FilterByNameAsync(searchQuery);
-        StateHasChanged();  // Refresh UI after update
-    }
-
+    // Search functionality
     private async void FilterAreas()
     {
-        if (!IsValidQuery) return;
         filteredAreas = new List<string>();
         var localAuthorityGeo = await AuthorityService.BboxByNameAsync(searchQuery);
         await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo);
     }
 
-    private void SelectArea(string area)
+    private async void OnSearchClick()
     {
-        searchQuery = area;
-        filteredAreas = new List<string>(); // Clear suggested districts
-    }
-
-    private async void OnToggleLayer()
-    {
-        await Debounce(ToggleLayer);
+        if (!IsValidQuery) return;
+        await Debounce(FilterAreas);
     }
 
     private async void OnSearchInput(ChangeEventArgs e)
     {
         if (e.Value == null) return;
         searchQuery = e.Value.ToString() ?? "";
-
-        // Don't trigger Autocomplete request until the user stops typing
-       await Debounce(FillIntellisense);
     }
 
-    private async void OnSearchClick()
+    // Toggle functionality
+    private async void ToggleLayer()
     {
-        await Debounce(FilterAreas);
+        await JS.InvokeVoidAsync("azureMaps.clearMap");
     }
 
+    private async void OnToggleLayer()
+    {
+        await Debounce(ToggleLayer);
+    }
 }

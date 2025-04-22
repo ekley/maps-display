@@ -56,31 +56,5 @@ namespace MapsDisplay.Tests
             var geometry = Assert.IsType<GeometryDto>(okResult.Value);
             Assert.NotNull(geometry);
         }
-
-        [Fact]
-        public void GetSimilarNames_ShouldReturnMatchingNames_WhenPartialNameProvided()
-        {
-            
-            var mockData = new Dictionary<string, GeometryDto>
-                {
-                    { "Broxbourne", new GeometryDto() },
-                    { "Broxtowe", new GeometryDto() },
-                    { "Oxford", new GeometryDto() },
-                    { "South Oxfordshire", new GeometryDto() },
-                    { "West Oxfordshire", new GeometryDto() }
-                };
-
-            SetupMockLookup(mockData);
-
-            var result = controller.GetSimilarNames("Ox");
-
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var similarNames = Assert.IsType<List<string>>(okResult.Value);
-
-            Assert.Contains("Oxford", similarNames);
-            Assert.Contains("South Oxfordshire", similarNames);
-            Assert.Contains("West Oxfordshire", similarNames);
-            Assert.True(similarNames.Count <= 6);
-        }
     }
 }

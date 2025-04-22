@@ -11,7 +11,7 @@
     <button id="toggleLayer" @onclick="OnHideDistricts">Hide Displayed Districts </button>
 
     <div class="search-box">
-        <input type="text" @oninput="OnSearchInput" placeholder="Search Areas..." />
+        <input type="text" @bind="searchQuery" @oninput="OnSearchInput" placeholder="Search Areas..." />
 
         <button id="search" @onclick="OnSearchClick" disabled="@(!IsValidQuery)">Search</button>
 

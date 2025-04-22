@@ -32,14 +32,16 @@ namespace MapsDisplay.Components.Tests
         public async Task SearchClick_Should_Call_BboxByNameAsync()
         {
             string testQuery = "Oxford";
-            var expectedGeometry = new GeometryDto
+            var mockGeometryDto = new GeometryDto
             {
-                Coordinates = new List<double>(),
-                Type = "Polygon"
+                Type = "Polygon",
+                Coordinates = new object()
             };
-            _mockAuthorityService.Setup(service => service.BboxByNameAsync(testQuery))
-                        .ReturnsAsync(expectedGeometry);
             
+            _mockAuthorityService.Setup(service => service.BboxByNameAsync(testQuery)) // Mock the service call
+                .ReturnsAsync(mockGeometryDto);
+            JSInterop.SetupVoid("azureMaps.setFilter", _ => true); // Mock JS interop call
+
             var ToolBoxComponent = RenderComponent<Toolbox>();
             var searchBtn = ToolBoxComponent.Find("#search");
 
@@ -47,7 +49,20 @@ namespace MapsDisplay.Components.Tests
             searchBtn.Click();
 
             await Task.Delay(800);
-            _mockAuthorityService.Verify(service => service.BboxByNameAsync(testQuery), Times.Once);
+            _mockAuthorityService.Verify(service => service.BboxByNameAsync(testQuery), Times.Once); // Verify the service call was made
+        }
+
+        [Fact]
+        public void HideDistrictsButton_Should_Call_JS_ClearMap()
+        {
+            JSInterop.SetupVoid("azureMaps.clearMap", _ => true); // Mock JS interop call
+
+            var component = RenderComponent<Toolbox>();
+            var hideButton = component.Find("button#toggleLayer");
+
+            hideButton.Click();
+
+            JSInterop.VerifyInvoke("azureMaps.clearMap"); // Verify the JS call was made
         }
 
     }

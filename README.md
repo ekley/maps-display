@@ -48,7 +48,6 @@ The goal of this application is to visualize **Local Authority Districts** in En
 - [.NET 8 SDK](https://dotnet.microsoft.com/)
 - Visual Studio 2022+ or VS Code
 - SQLite CLI / DB Browser(SQLite) [optional for inspection]
-- Docker
 
 ### Installation
 
@@ -82,26 +81,4 @@ cd maps-display
 }
 ```
 
-3. Navigate to the Features/LocalAuthority/Data/Datasets directory.
-Open PowerShell or Terminal with administrator privileges, and run:
-
-```bash
-Pull docker image: metacollin/tippecanoe
-```
-
-4. Then run the container interactively:
-
- ```bash
-docker run -it --rm -v "${PWD}:/data" metacollin/tippecanoe /bin/bash
-```
-
-5. Run Tippecanoe Inside the Container (to generate .mbtile file from your jeojson datasets):
-
- ```bash
- tippecanoe --no-tile-compression --include=name -l local_authorities_layer -o /data/local_authorities.mbtiles /data/local_authority_district.geojson
-```
-
-This will build 'local_authorities.mbtiles' file, now the app's ready to use
-When you run the app, 'lookup.json' file will automatically be generated for you if the file does not exist.
-
-(FYI: The extracted data from the local_authority_district.geojson file is stored in the lookup.json file, which maps district names to their corresponding coordinates. This improves response times when handling client requests, such as displaying a district based on a name search on the map.)
+Now the app's ready to use

@@ -33,7 +33,7 @@
     searchQuery.Length > 2 &&
     Regex.IsMatch(searchQuery, @"^[A-Za-z\s]+$");
 
-    private async Task Debounce(Action RequestToMake)
+    private async Task<bool> Debounce()
     {
         debounceSearchCts?.Cancel();
         debounceSearchCts = new CancellationTokenSource();
@@ -42,15 +42,11 @@
         try
         {
             await Task.Delay(debounceDelay, token);
-
-            if (!token.IsCancellationRequested)
-            {
-                RequestToMake();
-            }
+            return !token.IsCancellationRequested;
         }
         catch (TaskCanceledException)
         {
-
+            return false;
         }
     }
 
@@ -65,7 +61,12 @@
     private async void OnSearchClick()
     {
         if (!IsValidQuery) return;
-        await Debounce(FilterAreas);
+
+        var readyToSearch = await Debounce();
+        if (readyToSearch)
+        {
+            FilterAreas();
+        }
     }
 
     private async void OnSearchInput(ChangeEventArgs e)

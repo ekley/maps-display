@@ -53,6 +53,8 @@
         const isValid = turf.booleanValid(shape);
 
         if (isValid) {
+            this.clearMap();
+
             const bbox = turf.bbox(shape);
             const source = new atlas.source.DataSource();
 

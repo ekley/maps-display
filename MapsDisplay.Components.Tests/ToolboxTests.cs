@@ -31,10 +31,14 @@ namespace MapsDisplay.Components.Tests
         [Fact]
         public async Task SearchClick_Should_Call_BboxByNameAsync()
         {
-
-            string testQuery = "Ox";
-            _mockAuthorityService.Setup(service => service.BboxByNameAsync("Oxford"))
-                .ReturnsAsync(new GeometryDto());
+            string testQuery = "Oxford";
+            var expectedGeometry = new GeometryDto
+            {
+                Coordinates = new List<double>(),
+                Type = "Polygon"
+            };
+            _mockAuthorityService.Setup(service => service.BboxByNameAsync(testQuery))
+                        .ReturnsAsync(expectedGeometry);
             
             var ToolBoxComponent = RenderComponent<Toolbox>();
             var searchBtn = ToolBoxComponent.Find("#search");

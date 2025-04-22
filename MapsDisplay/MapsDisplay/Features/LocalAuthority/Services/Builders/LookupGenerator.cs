@@ -9,10 +9,11 @@ namespace MapsDisplay.Features.LocalAuthority.Services.Builders
     {
         public static void Generate()
         {
+            const string GEOJSON_FILE_NAME = "local_authority_district.geojson";
             string datasetsDirectory = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "Features", "LocalAuthority", "Data", "Datasets");
-            string geoJsonPath = Path.Combine(datasetsDirectory, "local_authority_district.geojson");
+            string geoJsonPath = Path.Combine(datasetsDirectory, GEOJSON_FILE_NAME);
             string jsonPath = Path.Combine(datasetsDirectory, "lookup.json");
 
             if (File.Exists(jsonPath))

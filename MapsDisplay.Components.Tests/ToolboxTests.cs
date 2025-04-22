@@ -29,7 +29,7 @@ namespace MapsDisplay.Components.Tests
         }
 
         [Fact]
-        public async Task DebouncedSearchClick_Should_Call_BboxByNameAsync()
+        public async Task SearchClick_Should_Call_BboxByNameAsync()
         {
 
             string testQuery = "Ox";

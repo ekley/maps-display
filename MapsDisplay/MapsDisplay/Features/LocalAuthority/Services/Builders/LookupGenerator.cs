@@ -30,7 +30,13 @@ namespace MapsDisplay.Features.LocalAuthority.Services.Builders
 
             foreach (var feature in featureCollection)
             {
-                var name = feature.Attributes["name"].ToString();
+                var name = feature.Attributes["name"]?.ToString();
+                if (string.IsNullOrEmpty(name))
+                {
+                    Console.WriteLine("Feature with missing or null 'name' attribute encountered. Skipping.");
+                    continue;
+                }
+
                 var geometry = feature.Geometry;
                 var geometryData = new object();
 
@@ -49,10 +55,10 @@ namespace MapsDisplay.Features.LocalAuthority.Services.Builders
                         type = "Polygon",
                         coordinates = new[]
                         {
-                            polygon.Shell.Coordinates
-                                .Select(c => new[] { c.X, c.Y })
-                                .ToArray()
-                        }
+                                polygon.Shell.Coordinates
+                                    .Select(c => new[] { c.X, c.Y })
+                                    .ToArray()
+                            }
                         .Concat(
                             polygon.Holes.Select(
                                 hole => hole.Coordinates

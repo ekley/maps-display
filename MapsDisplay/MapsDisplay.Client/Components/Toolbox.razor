@@ -55,7 +55,7 @@
     {
         filteredAreas = new List<string>();
         var localAuthorityGeo = await AuthorityService.BboxByNameAsync(searchQuery);
-        await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo);
+        await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo.Value);
     }
 
     private async void OnSearchClick()
@@ -69,7 +69,7 @@
         }
     }
 
-    private async void OnSearchInput(ChangeEventArgs e)
+    private void OnSearchInput(ChangeEventArgs e)
     {
         if (e.Value == null) return;
         searchQuery = e.Value.ToString() ?? "";

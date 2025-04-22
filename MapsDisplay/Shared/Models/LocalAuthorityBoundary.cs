@@ -16,28 +16,27 @@
 
     public class FeatureCollection
     {
-        public string type { get; set; }
-        public string name { get; set; }
-        public List<Feature> features { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public List<Feature> Features { get; set; } = new List<Feature>();
     }
 
     public class Feature
     {
-        public string type { get; set; }
-        public Geometry geometry { get; set; }
-        public Properties properties { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public Geometry Geometry { get; set; } = new Geometry();
+        public Properties Properties { get; set; } = new Properties();
     }
 
     public class Geometry
     {
-        public string type { get; set; }
-        public object coordinates { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public object Coordinates { get; set; } = new object();
     }
 
-    // { "dataset": "local-authority-district", "end-date": "", "entity": "8600000", "entry-date": "2024-06-28", "name": "Hartlepool", "organisation-entity": "10", "prefix": "statistical-geography", "reference": "E06000001", "start-date": "", "typology": "geography" }
     public class Properties
     {
-        public string name { get; set; }
-        public string reference { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Reference { get; set; } = string.Empty;
     }
 }

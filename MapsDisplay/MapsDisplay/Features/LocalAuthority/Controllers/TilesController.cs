@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using Shared.Utilities;
 
 namespace MapsDisplay.Features.LocalAuthority.Controllers
 {
@@ -20,6 +21,42 @@ namespace MapsDisplay.Features.LocalAuthority.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        private Result<byte[]> GetTileData(int z, int x, int y)
+        {
+            try
+            {
+                SQLitePCL.Batteries_V2.Init();
+
+                using var connection = new SqliteConnection($"Data Source={_mbtilesPath};");
+                connection.Open();
+
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT tile_data FROM tiles WHERE zoom_level = @z AND tile_column = @x AND tile_row = @y";
+                command.Parameters.AddWithValue("@z", z);
+                command.Parameters.AddWithValue("@x", x);
+                command.Parameters.AddWithValue("@y", FlipY(z, y));
+
+                var tileData = command.ExecuteScalar() as byte[];
+
+                if (tileData == null)
+                {
+                    return Result<byte[]>.Failure("Tile data not found.");
+                }
+
+                return Result<byte[]>.Success(tileData);
+            }
+            catch (SqliteException ex)
+            {
+                _logger.LogError(ex, "Database error occurred while retrieving tile: z={Z}, x={X}, y={Y}", z, x, y);
+                return Result<byte[]>.Failure("Database error while retrieving tile.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error occurred while retrieving tile: z={Z}, x={X}, y={Y}", z, x, y);
+                return Result<byte[]>.Failure("Unexpected error while retrieving tile.");
+            }
+        }
+
         /// <summary>
         /// Retrieves a tile by its zoom level, x, and y coordinates.
         /// </summary>
@@ -30,7 +67,6 @@ namespace MapsDisplay.Features.LocalAuthority.Controllers
         [HttpGet("{z:int}/{x:int}/{y:int}.pbf")]
         public IActionResult GetTile(int z, int x, int y)
         {
-            // Validate parameters before attempting the query
             if (z < 0 || x < 0 || y < 0)
             {
                 _logger.LogWarning("Invalid tile coordinates: z={Z}, x={X}, y={Y}", z, x, y);
@@ -43,38 +79,20 @@ namespace MapsDisplay.Features.LocalAuthority.Controllers
                 return NotFound("MBTiles file not found.");
             }
 
-            try
+            var result = GetTileData(z, x, y);
+
+            if (!result.IsSuccess)
             {
-                SQLitePCL.Batteries_V2.Init();
+                _logger.LogError("Error retrieving tile: {Error}", result.Error);
+                return StatusCode(500, result.Error);
+            }
 
-                using var connection = new SqliteConnection($"Data Source={_mbtilesPath};");
-                connection.Open();
-
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT tile_data FROM tiles WHERE zoom_level = @z AND tile_column = @x AND tile_row = @y";
-                command.Parameters.AddWithValue("@z", z);
-                command.Parameters.AddWithValue("@x", x);
-                command.Parameters.AddWithValue("@y", FlipY(z, y));  // Flip TMS to XYZ
-
-                var tileData = command.ExecuteScalar() as byte[];
-
-                if (tileData != null)
-                {
-                    return new FileContentResult(tileData, "application/x-protobuf");
-                }
-
+            if (result.Value == null)
+            {
                 return NoContent();
             }
-            catch (SqliteException ex)
-            {
-                _logger.LogError(ex, "Database error occurred while retrieving tile: z={Z}, x={X}, y={Y}", z, x, y);
-                return StatusCode(500, "Internal server error while retrieving tile.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error occurred while retrieving tile: z={Z}, x={X}, y={Y}", z, x, y);
-                return StatusCode(500, "Unexpected error while retrieving tile.");
-            }
+
+            return new FileContentResult(result.Value, "application/x-protobuf");
         }
 
         private static int FlipY(int zoom, int y) => (1 << zoom) - 1 - y;

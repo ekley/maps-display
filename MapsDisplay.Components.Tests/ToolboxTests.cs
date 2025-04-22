@@ -4,6 +4,7 @@ using Moq;
 using MapsDisplay.Client.Components;
 using Shared.Models;
 using Shared.Services.Interfaces;
+using Shared.Utilities;
 
 namespace MapsDisplay.Components.Tests
 {
@@ -32,12 +33,12 @@ namespace MapsDisplay.Components.Tests
         public async Task SearchClick_Should_Call_BboxByNameAsync()
         {
             string testQuery = "Oxford";
-            var mockGeometryDto = new GeometryDto
+            var mockGeometryDto = Result<GeometryDto>.Success(new GeometryDto
             {
                 Type = "Polygon",
                 Coordinates = new object()
-            };
-            
+            });
+
             _mockAuthorityService.Setup(service => service.BboxByNameAsync(testQuery)) // Mock the service call
                 .ReturnsAsync(mockGeometryDto);
             JSInterop.SetupVoid("azureMaps.setFilter", _ => true); // Mock JS interop call

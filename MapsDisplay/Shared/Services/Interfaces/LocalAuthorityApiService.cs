@@ -1,10 +1,11 @@
 ﻿using Shared.Models;
+using Shared.Utilities;
 
 namespace Shared.Services.Interfaces
 {
     public interface ILocalAuthorityApiService
     {
-        Task<GeometryDto> BboxByNameAsync(string name);
+        Task<Result<GeometryDto>> BboxByNameAsync(string name);
 
     }
 }

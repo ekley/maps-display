@@ -90,11 +90,13 @@ namespace MapsDisplay.Tests
         }
 
         [Fact]
-        public void GetTile_ShouldReturnNoContent_WhenTileDoesNotExist()
+        public void GetTile_ShouldReturn500_WhenTileDoesNotExist()
         {
-            var result = controller.GetTile(108, 10, 20);
+            var result = controller.GetTile(1028, 10, 20);
 
-            Assert.IsType<NoContentResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, objectResult.StatusCode);
+            Assert.Equal("Tile data not found.", objectResult.Value);
         }
     }
 }

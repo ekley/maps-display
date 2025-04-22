@@ -3,8 +3,9 @@ using MapsDisplay.Features.LocalAuthority.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using Shared.Models;
+using Shared.Utilities;
+using System.Text.Json;
 
 namespace MapsDisplay.Tests
 {
@@ -20,12 +21,12 @@ namespace MapsDisplay.Tests
             mockLogger = new Mock<ILogger<LocalAuthoritiesController>>();
             controller = new LocalAuthoritiesController(mockService.Object, mockLogger.Object);
         }
-        public void SetupMockLookup(Dictionary<string, GeometryDto>  mockData)
+        private void SetupMockLookup(Result<Dictionary<string, GeometryDto>>  mockData)
         {
             mockService.Setup(s => s.LoadLookup()).Returns(mockData);
         }
 
-        private Dictionary<string, GeometryDto> LoadTestDataFromJson(string fileName)
+        private Result<Dictionary<string, GeometryDto>> LoadTestDataFromJson(string fileName)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "TestData", fileName);
             if (!File.Exists(path))
@@ -34,20 +35,26 @@ namespace MapsDisplay.Tests
             }
 
             var json = File.ReadAllText(path);
-            var data = JsonConvert.DeserializeObject<Dictionary<string, GeometryDto>>(json);
+            var data = JsonSerializer.Deserialize<Dictionary<string, GeometryDto>>(json);
 
             if (data == null)
             {
                 throw new InvalidOperationException($"Test data from '{fileName}' is null.");
             }
 
-            return data;
+            return Result<Dictionary<string, GeometryDto>>.Success(data); ;
         }
 
         [Fact]
         public void GetGeometryByName_ShouldReturnGeometry_WhenNameExists()
         {
             var mockData = LoadTestDataFromJson("MockGeometry.json");
+
+            if (mockData.Value == null)
+            {
+                throw new InvalidOperationException("Mock data value is null.");
+            }
+
             SetupMockLookup(mockData);
 
             var result = controller.GetGeometryByName("Oxford");

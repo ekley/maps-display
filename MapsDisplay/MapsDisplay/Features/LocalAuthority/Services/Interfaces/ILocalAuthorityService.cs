@@ -1,9 +1,10 @@
 ﻿using Shared.Models;
+using Shared.Utilities;
 
 namespace MapsDisplay.Features.LocalAuthority.Services.Interfaces
 {
     public interface ILocalAuthorityService
     {
-        Dictionary<string, GeometryDto>? LoadLookup();
+        Result<Dictionary<string, GeometryDto>> LoadLookup();
     }
 }

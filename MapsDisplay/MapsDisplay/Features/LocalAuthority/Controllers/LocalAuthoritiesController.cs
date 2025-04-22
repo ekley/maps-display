@@ -27,17 +27,17 @@ namespace MapsDisplay.Features.LocalAuthority.Controllers
             }
 
             name = name.Trim();
-
             _logger.LogInformation("Request for geometry of '{name}'", name);
 
-            var lookup = _service.LoadLookup();
+            var result = _service.LoadLookup();
 
-            if (lookup == null)
+            if (!result.IsSuccess)
             {
-                _logger.LogWarning("Lookup data is null.");
-                return StatusCode(500, "Internal server error. Lookup data is unavailable.");
+                _logger.LogError("Lookup loading failed: {Error}", result.Error);
+                return StatusCode(500, result.Error);
             }
 
+            var lookup = result.Value!;
             if (!lookup.TryGetValue(name, out var geometry))
             {
                 _logger.LogWarning("Geometry for '{name}' not found.", name);

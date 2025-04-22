@@ -5,10 +5,9 @@ namespace Shared.Models
     public class GeometryDto
     {
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         [JsonPropertyName("coordinates")]
-        public object Coordinates { get; set; }
-
+        public object? Coordinates { get; set; }
     }
 }

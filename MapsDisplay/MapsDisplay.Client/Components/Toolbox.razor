@@ -11,7 +11,7 @@
     <button id="toggleLayer" @onclick="OnHideDistricts">Hide Displayed Districts </button>
 
     <div class="search-box">
-        <input type="text" @bind="searchQuery" @oninput="OnSearchInput" placeholder="Search Areas..." />
+        <input type="text" @oninput="OnSearchInput" placeholder="Search Areas..." />
 
         <button id="search" @onclick="OnSearchClick" disabled="@(!IsValidQuery)">Search</button>
 
@@ -27,7 +27,7 @@
     private List<string> areas = new List<string> { };
     private List<string> filteredAreas = new List<string> { };
     private static readonly int debounceDelay = 500; // 500ms delay for debouncing
-    private System.Threading.CancellationTokenSource debounceSearchCts;
+    private System.Threading.CancellationTokenSource debounceSearchCts = null!;
     private bool IsValidQuery =>
     !string.IsNullOrWhiteSpace(searchQuery) && 
     searchQuery.Length > 2 &&
@@ -35,7 +35,7 @@
 
     private async Task<bool> Debounce()
     {
-        debounceSearchCts?.Cancel();
+        debounceSearchCts?.Cancel();    
         debounceSearchCts = new CancellationTokenSource();
         var token = debounceSearchCts.Token;
 
@@ -72,7 +72,7 @@
     private void OnSearchInput(ChangeEventArgs e)
     {
         if (e.Value == null) return;
-        searchQuery = e.Value.ToString() ?? "";
+        searchQuery = e.Value.ToString()!;
     }
 
     // Hide functionality

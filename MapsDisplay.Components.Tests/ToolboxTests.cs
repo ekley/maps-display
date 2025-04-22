@@ -4,6 +4,7 @@ using Moq;
 using MapsDisplay.Client.Components;
 using Shared.Models;
 using Shared.Services.Interfaces;
+
 namespace MapsDisplay.Components.Tests
 {
     public class ToolboxTests : TestContext
@@ -19,9 +20,9 @@ namespace MapsDisplay.Components.Tests
         [Fact]
         public void Toolbox_Rendering()
         {
-            var cut = RenderComponent<Toolbox>();
-            var toggleButton = cut.Find("#toggleLayer");
-            var searchInput = cut.Find(".search-box input");
+            var component = RenderComponent<Toolbox>();
+            var toggleButton = component.Find("#toggleLayer");
+            var searchInput = component.Find(".search-box input");
 
             Assert.NotNull(toggleButton);
             Assert.NotNull(searchInput);
@@ -41,9 +42,9 @@ namespace MapsDisplay.Components.Tests
                 .ReturnsAsync(mockGeometryDto);
             JSInterop.SetupVoid("azureMaps.setFilter", _ => true); // Mock JS interop call
 
-            var ToolBoxComponent = RenderComponent<Toolbox>();
-            var searchBtn = ToolBoxComponent.Find("#search");
-            var searchInput = ToolBoxComponent.Find("input[type='text']");
+            var component = RenderComponent<Toolbox>();
+            var searchBtn = component.Find("#search");
+            var searchInput = component.Find("input[type='text']");
 
             searchInput.Change(testQuery);
             searchBtn.Click();
@@ -66,7 +67,7 @@ namespace MapsDisplay.Components.Tests
         }
 
         [Fact]
-        public void SearchInput_Should_Update_Query_When_Typed()
+        public void SearchInput_Should_UpdateInputValue_WhenUserTypes()
         {
             var component = RenderComponent<Toolbox>();
             var searchInput = component.Find("input[type='text']");

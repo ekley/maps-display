@@ -7,24 +7,31 @@ namespace MapsDisplay.Features.LocalAuthority.Services.Implementations
 {
     public class LocalAuthorityService : ILocalAuthorityService
     {
+        private static Dictionary<string, GeometryDto>? _lookupCache;
         public Result<Dictionary<string, GeometryDto>> LoadLookup()
         {
             try
             {
-                const string JSON_FILE_NAME = "lookup.json";
-                string lookupFile = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "Features", "LocalAuthority", "Data", "Datasets", JSON_FILE_NAME
-                );
+                if (_lookupCache == null)  // first time: load and cache (cause json file is less than 100 MB)
+                {
+                    const string JSON_FILE_NAME = "lookup.json";
+                    string lookupFile = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "Features", "LocalAuthority", "Data", "Datasets", JSON_FILE_NAME
+                    );
 
-                if (!File.Exists(lookupFile))
-                    return Result<Dictionary<string, GeometryDto>>.Failure("Lookup file does not exist.");
+                    if (!File.Exists(lookupFile))
+                        return Result<Dictionary<string, GeometryDto>>.Failure("Lookup file does not exist.");
 
-                var json = File.ReadAllText(lookupFile);
-                var data = JsonSerializer.Deserialize<Dictionary<string, GeometryDto>>(json);
+                    var json = File.ReadAllText(lookupFile);
+                    _lookupCache = JsonSerializer.Deserialize<Dictionary<string, GeometryDto>>(json);
 
-                return data is not null
-                    ? Result<Dictionary<string, GeometryDto>>.Success(data)
+                    if (_lookupCache == null)
+                        return Result<Dictionary<string, GeometryDto>>.Failure("Deserialized lookup data is null.");
+                }
+
+                return _lookupCache is not null
+                    ? Result<Dictionary<string, GeometryDto>>.Success(_lookupCache)
                     : Result<Dictionary<string, GeometryDto>>.Failure("Deserialized lookup data is null.");
             }
             catch (JsonException ex)

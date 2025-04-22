@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Services.Interfaces;
 
-namespace MapsDisplay.Features.LocalAuthority.Services.Configuration
+namespace MapsDisplay.Features.LocalAuthority.Services.Configurations
 {
     public static class ServiceExtensions
     {

@@ -1,6 +1,6 @@
 using MapsDisplay.Components;
 using MapsDisplay.Features.LocalAuthority.Services.Builders;
-using MapsDisplay.Features.LocalAuthority.Services.Configuration;
+using MapsDisplay.Features.LocalAuthority.Services.Configurations;
 
 
 var builder = WebApplication.CreateBuilder(args);

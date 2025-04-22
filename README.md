@@ -55,7 +55,7 @@ The goal of this application is to visualize **Local Authority Districts** in En
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/maps-display.git
+git clone https://github.com/beneki/maps-display.git
 cd maps-display
 ```
 

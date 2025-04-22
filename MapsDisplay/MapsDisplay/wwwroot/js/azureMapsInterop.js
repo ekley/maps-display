@@ -26,6 +26,21 @@
 
         this.currentLayerId = null;
     },
+    addLayer: function (source, sourceLayer = undefined) {
+        this.map.sources.add(source);
+        const layer = new atlas.layer.PolygonLayer(source, null, {
+            ...(sourceLayer ? {
+                'source-layer': sourceLayer,
+                sourceLayer: sourceLayer,
+            }: {}),
+            fillColor: 'rgba(0, 100, 255, 0.4)',
+            strokeColor: '#004aad',
+            strokeWidth: 2
+        });
+
+        this.map.layers.add(layer);
+        this.currentLayerId = layer.id;
+    },
     setFilter: function (areaName, geometry) {
         const shape = {
             type: "Feature",
@@ -36,21 +51,13 @@
         };
         const isValid = turf.booleanValid(shape);
 
-
         if (isValid) {
             const bbox = turf.bbox(shape);
             const dataSource = new atlas.source.DataSource();
             dataSource.add(shape);
-            this.map.sources.add(dataSource);
 
-            const authorityLayer = new atlas.layer.PolygonLayer(dataSource, null, {
-                fillColor: 'rgba(0, 100, 255, 0.4)',
-                strokeColor: '#004aad',
-                strokeWidth: 2
-            });
+            this.addLayer(dataSource);
 
-            this.map.layers.add(authorityLayer);
-            this.currentLayerId = authorityLayer.id; // Store reference to current layer
             // take the map camera to the searched place
             this.map.setCamera({
                 bounds: bbox,
@@ -64,17 +71,7 @@
             tiles: ['https://localhost:7177/api/tiles/{z}/{x}/{y}.pbf'],
             maxZoom: 22,
         });
-        this.map.sources.add(source);
 
-        const localAuthorities = new atlas.layer.PolygonLayer(source, null, {
-            'source-layer': 'local_authorities_layer',
-            sourceLayer: 'local_authorities_layer',
-            fillColor: 'rgba(0, 100, 255, 0.4)',
-            strokeColor: '#004aad',
-            strokeWidth: 2
-        });
-
-        this.map.layers.add(localAuthorities);
-        this.currentLayerId = localAuthorities.id;
+        this.addLayer(source, 'local_authorities_layer');
     }
 };

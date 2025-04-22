@@ -4,7 +4,6 @@ using Moq;
 using MapsDisplay.Client.Components;
 using Shared.Models;
 using Shared.Services.Interfaces;
-
 namespace MapsDisplay.Components.Tests
 {
     public class ToolboxTests : TestContext
@@ -44,8 +43,9 @@ namespace MapsDisplay.Components.Tests
 
             var ToolBoxComponent = RenderComponent<Toolbox>();
             var searchBtn = ToolBoxComponent.Find("#search");
+            var searchInput = ToolBoxComponent.Find("input[type='text']");
 
-            ToolBoxComponent.Find("input[type='text']").Change(testQuery);
+            searchInput.Change(testQuery);
             searchBtn.Click();
 
             await Task.Delay(800);
@@ -63,6 +63,18 @@ namespace MapsDisplay.Components.Tests
             hideButton.Click();
 
             JSInterop.VerifyInvoke("azureMaps.clearMap"); // Verify the JS call was made
+        }
+
+        [Fact]
+        public void SearchInput_Should_Update_Query_When_Typed()
+        {
+            var component = RenderComponent<Toolbox>();
+            var searchInput = component.Find("input[type='text']");
+            string testQuery = "Oxford";
+
+            searchInput.Change(testQuery);
+
+            Assert.Equal(testQuery, searchInput.GetAttribute("value"));
         }
 
     }

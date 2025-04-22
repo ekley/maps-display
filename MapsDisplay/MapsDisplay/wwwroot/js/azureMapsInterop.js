@@ -1,6 +1,7 @@
 ﻿window.azureMaps = {
     map: null,
-    polygonLayer: null,
+    currentLayer: null,
+
     createMap: function (elementId, mapsKey) {
         this.map = new atlas.Map(elementId, {
             center: [-0.1276, 51.5074],  // London coordinates
@@ -16,14 +17,16 @@
         });
     },
     clearMap: function () {
-        if (!this.map || !this.polygonLayer) return;
+        if (!this.map || !this.currentLayer) return;
 
-        const layerId = this.polygonLayer.id;
+        const layerId = this.currentLayer.id;
         const doesLayerExist = this.map.layers._getMapboxLayerExists(layerId);
 
         if (doesLayerExist) {
             this.map.layers._removeLayer(layerId)
         }
+
+        this.currentLayer = null;
     },
     setFilter: function (areaName, geometry) {
         const shape = {
@@ -31,16 +34,30 @@
             geometry: {
                 ...geometry
             },
-            properties: {}
+            properties: { name: areaName }
         };
         const isValid = turf.booleanValid(shape);
 
-        this.polygonLayer.setOptions({
-            filter: ['==', ['get', 'name'], areaName]
-        });
+
         if (isValid) {
             const bbox = turf.bbox(shape);
+            const dataSource = new atlas.source.DataSource();
+            dataSource.add(shape);
+            this.map.sources.add(dataSource);
 
+            const authorityLayer = new atlas.layer.PolygonLayer(dataSource, null, {
+                fillColor: 'rgba(0, 100, 255, 0.4)',
+                strokeColor: '#004aad',
+                strokeWidth: 2
+            });
+
+            // Apply filter to show only the matching feature by name
+            authorityLayer.setOptions({
+                filter: ['==', ['get', 'name'], areaName]
+            });
+
+            this.map.layers.add(authorityLayer);
+            this.currentLayer = authorityLayer; // Store reference to current layer
             // take the map camera to the searched place
             this.map.setCamera({
                 bounds: bbox,
@@ -54,15 +71,15 @@
             tiles: ['https://localhost:7177/api/tiles/{z}/{x}/{y}.pbf'],
             maxZoom: 22,
         });
-        this.polygonLayer = new atlas.layer.PolygonLayer(source, null, {
-            "source-layer": 'local_authorities_layer',
+        this.map.sources.add(source);
+
+        this.currentLayer = new atlas.layer.PolygonLayer(source, null, {
+            'source-layer': 'local_authorities_layer',
             sourceLayer: 'local_authorities_layer',
             fillColor: 'rgba(0, 100, 255, 0.4)',
             strokeColor: '#004aad',
             strokeWidth: 2
         });
-
-        this.map.sources.add(source);
-        this.map.layers.add(this.polygonLayer);
+        this.map.layers.add(this.currentLayer);
     }
 };

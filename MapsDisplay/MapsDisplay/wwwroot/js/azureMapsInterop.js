@@ -26,18 +26,19 @@
 
         this.currentLayerId = null;
     },
-    addLayer: function (source, sourceLayer = undefined) {
-        this.map.sources.add(source);
+    addLayer: function (source, srcLayerName = undefined) {
+        const sourceLayerProp = srcLayerName ? {
+            'source-layer': srcLayerName,
+            sourceLayer: srcLayerName,
+        } : {};
         const layer = new atlas.layer.PolygonLayer(source, null, {
-            ...(sourceLayer ? {
-                'source-layer': sourceLayer,
-                sourceLayer: sourceLayer,
-            }: {}),
+            ...sourceLayerProp, // optional property
             fillColor: 'rgba(0, 100, 255, 0.4)',
             strokeColor: '#004aad',
             strokeWidth: 2
         });
 
+        this.map.sources.add(source);
         this.map.layers.add(layer);
         this.currentLayerId = layer.id;
     },
@@ -53,10 +54,10 @@
 
         if (isValid) {
             const bbox = turf.bbox(shape);
-            const dataSource = new atlas.source.DataSource();
-            dataSource.add(shape);
+            const source = new atlas.source.DataSource();
 
-            this.addLayer(dataSource);
+            source.add(shape);
+            this.addLayer(source);
 
             // take the map camera to the searched place
             this.map.setCamera({

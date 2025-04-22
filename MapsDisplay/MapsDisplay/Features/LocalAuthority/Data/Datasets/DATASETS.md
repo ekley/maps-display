@@ -4,6 +4,12 @@ If you want to use your own GeoJSON files instead of the default ones, follow th
 
 ---
 
+### ⚠️ **Prerequisites**
+
+Before starting, make sure you have **Docker** installed on your machine. You can download and install Docker from the official website: [Docker Installation](https://www.docker.com/get-started).
+
+---
+
 ### 🧰 **1. Pull the Tippecanoe Docker Image**
 
 Navigate to:

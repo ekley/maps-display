@@ -34,10 +34,21 @@ namespace MapsDisplay.Configurations
             })
             .AddMicrosoftAccount(microsoftOptions =>
             {
-                microsoftOptions.ClientId = configuration["Authentication:Microsoft:ClientId"];
-                microsoftOptions.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"];
-                microsoftOptions.AuthorizationEndpoint = configuration["Authentication:Microsoft:AuthorizationEndpoint"];
-                microsoftOptions.TokenEndpoint = configuration["Authentication:Microsoft:TokenEndpoint"];
+                var clientId = configuration["Authentication:Microsoft:ClientId"];
+                var clientSecret = configuration["Authentication:Microsoft:ClientSecret"];
+                var authorizationEndpoint = configuration["Authentication:Microsoft:AuthorizationEndpoint"];
+                var tokenEndpoint = configuration["Authentication:Microsoft:TokenEndpoint"];
+
+                if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret) ||
+                    string.IsNullOrEmpty(authorizationEndpoint) || string.IsNullOrEmpty(tokenEndpoint))
+                {
+                    throw new InvalidOperationException("Microsoft authentication configuration is missing or invalid.");
+                }
+
+                microsoftOptions.ClientId = clientId;
+                microsoftOptions.ClientSecret = clientSecret;
+                microsoftOptions.AuthorizationEndpoint = authorizationEndpoint;
+                microsoftOptions.TokenEndpoint = tokenEndpoint;
             })
             .AddIdentityCookies();
         }
@@ -60,7 +71,7 @@ namespace MapsDisplay.Configurations
 
         public static void AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
         {
-            var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+            var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>

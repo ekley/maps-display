@@ -8,7 +8,7 @@
 @rendermode InteractiveWebAssembly
 
 <div class="toolbox">
-    <button id="toggleLayer" @onclick="OnToggleLayer">Toggle Layer</button>
+    <button id="toggleLayer" @onclick="OnHideDistricts">Hide Displayed Districts </button>
 
     <div class="search-box">
         <input type="text" @bind="searchQuery" @oninput="OnSearchInput" placeholder="Search Areas..." />
@@ -35,8 +35,6 @@
 
     private async Task Debounce(Action RequestToMake)
     {
-        if (!IsValidQuery) return;
-
         debounceSearchCts?.Cancel();
         debounceSearchCts = new CancellationTokenSource();
         var token = debounceSearchCts.Token;
@@ -76,14 +74,9 @@
         searchQuery = e.Value.ToString() ?? "";
     }
 
-    // Toggle functionality
-    private async void ToggleLayer()
+    // Hide functionality
+    private async void OnHideDistricts()
     {
         await JS.InvokeVoidAsync("azureMaps.clearMap");
-    }
-
-    private async void OnToggleLayer()
-    {
-        await Debounce(ToggleLayer);
     }
 }

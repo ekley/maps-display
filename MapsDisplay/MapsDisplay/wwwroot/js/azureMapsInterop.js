@@ -23,8 +23,6 @@
 
         if (doesLayerExist) {
             this.map.layers._removeLayer(layerId)
-        } else {
-            this.map.layers.add(this.polygonLayer);
         }
     },
     setFilter: function (areaName, geometry) {

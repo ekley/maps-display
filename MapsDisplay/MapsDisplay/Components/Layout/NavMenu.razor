@@ -12,6 +12,7 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
@@ -27,11 +28,12 @@
 
         <AuthorizeView>
             <Authorized>
-@*                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                <div class="nav-item px-3">
+                     <NavLink class="nav-link" href="#">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>
+                        @context.User.Identity?.Name?.Substring(0, Math.Min(10, context.User.Identity.Name.Length))
                     </NavLink>
-                </div> *@
+                </div>
                 <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
@@ -43,11 +45,6 @@
                 </div>
             </Authorized>
             <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
-                    </NavLink>
-                </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Login">
                         <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
@@ -78,4 +75,5 @@
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }
+
 

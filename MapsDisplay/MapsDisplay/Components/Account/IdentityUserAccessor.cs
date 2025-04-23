@@ -1,5 +1,4 @@
 using MapsDisplay.Features.LocalAuthority.Data;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace MapsDisplay.Components.Account

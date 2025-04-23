@@ -16,18 +16,5 @@ namespace MapsDisplay.Components.Account
 
             return user;
         }
-
-        //public async Task<string> GetRequiredTokenAsync(HttpContext context)
-        //{
-            //var authResult = await context.AuthenticateAsync(IdentityConstants.ExternalScheme);
-            //var token = authResult.Properties.GetTokenValue("access_token");
-            
-            //if (token is null)
-            //{
-            //    redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Error: Unable to load user with ID '{userManager.GetUserId(context.User)}'.", context);
-            //}
-
-            //return token;
-        //}
     }
 }

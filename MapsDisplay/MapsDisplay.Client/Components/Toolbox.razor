@@ -1,5 +1,5 @@
 ﻿@using System.Threading.Tasks
-@using Shared.Models
+@using Shared.Dtos
 @using Microsoft.AspNetCore.Components
 @using Shared.Services.Interfaces
 @using System.Text.RegularExpressions
@@ -25,7 +25,6 @@
 @code {
     private string searchQuery = string.Empty;
     private List<string> areas = new List<string> { };
-    private List<string> filteredAreas = new List<string> { };
     private static readonly int debounceDelay = 500; // 500ms delay for debouncing
     private System.Threading.CancellationTokenSource debounceSearchCts = null!;
     private bool IsValidQuery =>
@@ -53,7 +52,6 @@
     // Search functionality
     private async void FilterAreas()
     {
-        filteredAreas = new List<string>();
         var localAuthorityGeo = await AuthorityService.BboxByNameAsync(searchQuery);
         await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo.Value);
     }

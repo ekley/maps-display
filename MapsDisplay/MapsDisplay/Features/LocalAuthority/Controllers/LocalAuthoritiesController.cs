@@ -1,6 +1,6 @@
 ﻿using MapsDisplay.Features.LocalAuthority.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models;
+using Shared.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace MapsDisplay.Features.LocalAuthority.Controllers

@@ -1,5 +1,5 @@
 ﻿using MapsDisplay.Features.LocalAuthority.Services.Interfaces;
-using Shared.Models;
+using Shared.Dtos;
 using Shared.Utilities;
 using System.Text.Json;
 

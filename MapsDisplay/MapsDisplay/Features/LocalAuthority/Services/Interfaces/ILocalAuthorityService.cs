@@ -1,4 +1,4 @@
-﻿using Shared.Models;
+﻿using Shared.Dtos;
 using Shared.Utilities;
 
 namespace MapsDisplay.Features.LocalAuthority.Services.Interfaces

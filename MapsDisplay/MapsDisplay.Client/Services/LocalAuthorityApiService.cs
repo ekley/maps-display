@@ -1,4 +1,4 @@
-﻿using Shared.Models;
+﻿using Shared.Dtos;
 using Shared.Services.Interfaces;
 using Shared.Utilities;
 using System.Net.Http.Json;

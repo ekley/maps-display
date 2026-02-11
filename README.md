@@ -1,4 +1,4 @@
-# Local Authority Districts Map — Technical Test
+# Local Authority Districts Map
 
 This is a technical test project designed to demonstrate modern software engineering practices, focusing on geographical data visualization, clean architecture, and interactive UI components.
 

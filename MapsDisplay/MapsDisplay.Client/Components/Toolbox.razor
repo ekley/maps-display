@@ -1,0 +1,83 @@
+﻿@using System.Threading.Tasks
+@using Shared.Models
+@using Microsoft.AspNetCore.Components
+@using Shared.Services.Interfaces
+@using System.Text.RegularExpressions
+@inject ILocalAuthorityApiService AuthorityService
+@inject IJSRuntime JS
+@rendermode InteractiveWebAssembly
+
+<div class="toolbox">
+    <button id="toggleLayer" @onclick="OnHideDistricts">Hide Displayed Districts </button>
+
+    <div class="search-box">
+        <input type="text" @bind="searchQuery" @oninput="OnSearchInput" placeholder="Search Areas..." />
+
+        <button id="search" @onclick="OnSearchClick" disabled="@(!IsValidQuery)">Search</button>
+
+        @if (!IsValidQuery && searchQuery.Length > 0)
+        {
+            <p class="validation-message">Only letters and spaces are allowed. Numbers and special characters are not valid.</p>
+        }
+    </div>
+</div>
+
+@code {
+    private string searchQuery = string.Empty;
+    private List<string> areas = new List<string> { };
+    private List<string> filteredAreas = new List<string> { };
+    private static readonly int debounceDelay = 500; // 500ms delay for debouncing
+    private System.Threading.CancellationTokenSource debounceSearchCts = null!;
+    private bool IsValidQuery =>
+    !string.IsNullOrWhiteSpace(searchQuery) && 
+    searchQuery.Length > 2 &&
+    Regex.IsMatch(searchQuery, @"^[A-Za-z\s]+$");
+
+    private async Task<bool> Debounce()
+    {
+        debounceSearchCts?.Cancel();    
+        debounceSearchCts = new CancellationTokenSource();
+        var token = debounceSearchCts.Token;
+
+        try
+        {
+            await Task.Delay(debounceDelay, token);
+            return !token.IsCancellationRequested;
+        }
+        catch (TaskCanceledException)
+        {
+            return false;
+        }
+    }
+
+    // Search functionality
+    private async void FilterAreas()
+    {
+        filteredAreas = new List<string>();
+        var localAuthorityGeo = await AuthorityService.BboxByNameAsync(searchQuery);
+        await JS.InvokeVoidAsync("azureMaps.setFilter", searchQuery, localAuthorityGeo.Value);
+    }
+
+    private async void OnSearchClick()
+    {
+        if (!IsValidQuery) return;
+
+        var readyToSearch = await Debounce();
+        if (readyToSearch)
+        {
+            FilterAreas();
+        }
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        if (e.Value == null) return;
+        searchQuery = e.Value.ToString()!;
+    }
+
+    // Hide functionality
+    private async void OnHideDistricts()
+    {
+        await JS.InvokeVoidAsync("azureMaps.clearMap");
+    }
+}

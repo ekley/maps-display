@@ -1,0 +1,25 @@
+﻿@inject IConfiguration Configuration
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<div id="myMap" style="width:100%; height:500px;"></div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var MapsKey = Configuration["Maps:SubscriptionKey"];
+
+            if (!string.IsNullOrEmpty(MapsKey))
+            {
+                await JS.InvokeVoidAsync("azureMaps.createMap", "myMap", MapsKey);
+  
+            }
+            else
+            {
+                Console.WriteLine("Error: Unable to acquire the token.");
+            }
+        }
+    }
+}

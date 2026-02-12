@@ -1,12 +1,12 @@
 # Local Authority Districts Map
 
-This is a technical test project designed to demonstrate modern software engineering practices, focusing on geographical data visualization, clean architecture, and interactive UI components.
+This project is designed to demonstrate modern software engineering practices, focusing on geographical data visualization, clean architecture, and interactive UI components.
 
 ---
 
 ## 📍 Project Purpose
 
-The goal of this application is to visualize **Local Authority Districts** in England using an interactive web map. This project is designed as part of a technical assessment to reflect real-world coding standards, practices, and problem-solving.
+The goal of this application is to visualize **Local Authority Districts** in England using an interactive web map.
 
 ---
 
